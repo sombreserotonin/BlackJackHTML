@@ -2,6 +2,8 @@
 let deck = [];
 let playerHand = [];
 let dealerHand = [];
+let computerPlayers = []; // Array to store computer players
+let numComputerPlayers = 2; // Default number of computer players
 let playerScore = 0;
 let dealerScore = 0;
 let gameOver = false;
@@ -21,6 +23,8 @@ const messageElement = document.getElementById('message');
 const winsElement = document.getElementById('wins');
 const lossesElement = document.getElementById('losses');
 const drawsElement = document.getElementById('draws');
+let computerPlayersContainer = document.getElementById('computer-players-container');
+const computerPlayersSelect = document.getElementById('computer-players');
 
 // Card values and suits
 const suits = ['♥', '♦', '♠', '♣'];
@@ -40,7 +44,103 @@ document.addEventListener('DOMContentLoaded', () => {
         playerDraws = stats.draws;
         updateStats();
     }
+    
+    // Create computer players container if it doesn't exist
+    if (!computerPlayersContainer) {
+        createComputerPlayersContainer();
+    }
+    
+    // Initialize computer players
+    initializeComputerPlayers();
+    
+    // Add event listener for computer players select
+    computerPlayersSelect.addEventListener('change', updateComputerPlayerCount);
 });
+
+// Update computer player count
+function updateComputerPlayerCount() {
+    const newCount = parseInt(computerPlayersSelect.value);
+    
+    // Only update if the count has changed
+    if (newCount !== numComputerPlayers) {
+        numComputerPlayers = newCount;
+        
+        // Reinitialize computer players
+        initializeComputerPlayers();
+        
+        // If a game is in progress, restart it
+        if (!dealButton.disabled) {
+            // Game is not in progress, just update the UI
+            messageElement.textContent = `Computer players set to ${numComputerPlayers}. Press 'Deal' to start a new game.`;
+        } else {
+            // Game is in progress, restart it
+            startNewGame();
+        }
+    }
+}
+
+// Create computer players container
+function createComputerPlayersContainer() {
+    const gameArea = document.querySelector('.game-area');
+    const playerArea = document.querySelector('.player-area');
+    
+    const container = document.createElement('div');
+    container.id = 'computer-players-container';
+    container.className = 'computer-players-container';
+    
+    // Insert before player area
+    gameArea.insertBefore(container, playerArea);
+    
+    // Update the reference
+    computerPlayersContainer = container;
+}
+
+// Initialize computer players
+function initializeComputerPlayers() {
+    computerPlayers = [];
+    
+    // Clear the container
+    if (computerPlayersContainer) {
+        computerPlayersContainer.innerHTML = '';
+    }
+    
+    // Create computer players
+    for (let i = 0; i < numComputerPlayers; i++) {
+        const computerPlayer = {
+            id: i + 1,
+            hand: [],
+            score: 0,
+            element: createComputerPlayerElement(i + 1)
+        };
+        
+        computerPlayers.push(computerPlayer);
+    }
+}
+
+// Create computer player element
+function createComputerPlayerElement(id) {
+    const computerPlayerElement = document.createElement('div');
+    computerPlayerElement.className = 'computer-player-area';
+    computerPlayerElement.id = `computer-player-${id}`;
+    
+    const heading = document.createElement('h2');
+    heading.innerHTML = `Computer ${id} <span id="computer-${id}-score" class="score">0</span>`;
+    
+    const cardsContainer = document.createElement('div');
+    cardsContainer.className = 'cards';
+    cardsContainer.id = `computer-${id}-cards`;
+    
+    computerPlayerElement.appendChild(heading);
+    computerPlayerElement.appendChild(cardsContainer);
+    
+    computerPlayersContainer.appendChild(computerPlayerElement);
+    
+    return {
+        container: computerPlayerElement,
+        cardsElement: cardsContainer,
+        scoreElement: document.getElementById(`computer-${id}-score`)
+    };
+}
 
 // Create a new shuffled deck
 function createDeck() {
@@ -72,15 +172,31 @@ function startNewGame() {
     dealerScore = 0;
     gameOver = false;
     
+    // Reset computer players
+    computerPlayers.forEach(player => {
+        player.hand = [];
+        player.score = 0;
+        player.element.cardsElement.innerHTML = '';
+    });
+    
     // Clear the display
     playerCardsElement.innerHTML = '';
     dealerCardsElement.innerHTML = '';
     messageElement.textContent = '';
     
     // Deal initial cards
+    // First round of cards
     playerHand.push(drawCard());
+    computerPlayers.forEach(player => {
+        player.hand.push(drawCard());
+    });
     dealerHand.push(drawCard());
+    
+    // Second round of cards
     playerHand.push(drawCard());
+    computerPlayers.forEach(player => {
+        player.hand.push(drawCard());
+    });
     dealerHand.push(drawCard(true)); // Second dealer card is face down
     
     // Update the display
@@ -139,6 +255,12 @@ function updateScores() {
     playerScore = calculateScore(playerHand);
     dealerScore = calculateScore(dealerHand);
     
+    // Update computer player scores
+    computerPlayers.forEach(player => {
+        player.score = calculateScore(player.hand);
+        player.element.scoreElement.textContent = player.score;
+    });
+    
     playerScoreElement.textContent = playerScore;
     dealerScoreElement.textContent = dealerScore;
     
@@ -150,12 +272,22 @@ function renderCards() {
     playerCardsElement.innerHTML = '';
     dealerCardsElement.innerHTML = '';
     
+    // Render player cards
     playerHand.forEach(card => {
         playerCardsElement.appendChild(createCardElement(card));
     });
     
+    // Render dealer cards
     dealerHand.forEach(card => {
         dealerCardsElement.appendChild(createCardElement(card));
+    });
+    
+    // Render computer player cards
+    computerPlayers.forEach(player => {
+        player.element.cardsElement.innerHTML = '';
+        player.hand.forEach(card => {
+            player.element.cardsElement.appendChild(createCardElement(card));
+        });
     });
 }
 
@@ -216,11 +348,27 @@ function playerStand() {
     // Reveal dealer's face-down card
     dealerHand.forEach(card => card.faceDown = false);
     
+    // Computer players play their turns
+    computerPlayersPlay();
+    
     // Dealer draws until they have at least 17
     dealerPlay();
     
     // Determine the winner
     determineWinner();
+}
+
+// Computer players play their turns
+function computerPlayersPlay() {
+    computerPlayers.forEach(player => {
+        // Basic strategy: hit until 17 or higher
+        while (player.score < 17) {
+            player.hand.push(drawCard());
+            player.score = calculateScore(player.hand);
+        }
+    });
+    
+    updateScores();
 }
 
 // Dealer's play logic
@@ -237,24 +385,92 @@ function dealerPlay() {
 // Determine the winner
 function determineWinner() {
     let result;
+    let winners = [];
+    let message = '';
     
+    // Check if player busted
     if (playerScore > 21) {
         result = 'bust';
-    } else if (dealerScore > 21) {
-        result = 'dealer_bust';
-    } else if (playerScore > dealerScore) {
-        result = 'player_win';
-    } else if (playerScore < dealerScore) {
-        result = 'dealer_win';
     } else {
-        result = 'push';
+        // Player didn't bust, check against dealer
+        if (dealerScore > 21) {
+            // Dealer busted, player wins
+            result = 'dealer_bust';
+            winners.push('player');
+            
+            // Check which computer players didn't bust
+            computerPlayers.forEach(player => {
+                if (player.score <= 21) {
+                    winners.push(`computer_${player.id}`);
+                }
+            });
+        } else {
+            // Neither player nor dealer busted, compare scores
+            if (playerScore > dealerScore) {
+                winners.push('player');
+            } else if (playerScore < dealerScore) {
+                // Player lost to dealer
+            } else {
+                // Player tied with dealer
+                result = 'push';
+            }
+            
+            // Check computer players against dealer
+            computerPlayers.forEach(player => {
+                if (player.score <= 21 && player.score > dealerScore) {
+                    winners.push(`computer_${player.id}`);
+                } else if (player.score === dealerScore && player.score <= 21) {
+                    // Computer player tied with dealer
+                }
+            });
+            
+            // Determine final result based on winners
+            if (winners.includes('player')) {
+                result = 'player_win';
+            } else if (winners.length > 0) {
+                result = 'computer_win';
+            } else if (result !== 'push') {
+                result = 'dealer_win';
+            }
+        }
     }
     
-    endGame(result);
+    // Create message based on result and winners
+    if (result === 'bust') {
+        message = 'You bust! ';
+        playerLosses++;
+    } else if (result === 'dealer_bust') {
+        message = 'Dealer busts! ';
+        if (winners.includes('player')) {
+            message += 'You win! ';
+            playerWins++;
+        }
+    } else if (result === 'player_win') {
+        message = 'You win! ';
+        playerWins++;
+    } else if (result === 'dealer_win') {
+        message = 'Dealer wins. ';
+        playerLosses++;
+    } else if (result === 'push') {
+        message = "It's a tie between you and the dealer! ";
+        playerDraws++;
+    } else if (result === 'computer_win' && !winners.includes('player')) {
+        message = 'You lose. ';
+        playerLosses++;
+    }
+    
+    // Add computer winners to message
+    const computerWinners = winners.filter(w => w.startsWith('computer_'));
+    if (computerWinners.length > 0) {
+        message += 'Computer player' + (computerWinners.length > 1 ? 's ' : ' ');
+        message += computerWinners.map(w => w.split('_')[1]).join(', ') + ' won!';
+    }
+    
+    endGame(result, message);
 }
 
 // End the game and display the result
-function endGame(result) {
+function endGame(result, customMessage) {
     gameOver = true;
     
     // Enable/disable buttons
@@ -263,38 +479,70 @@ function endGame(result) {
     standButton.disabled = true;
     
     // Display message based on result
-    let message = '';
+    let message = customMessage || '';
     let playerArea = document.querySelector('.player-area');
     let dealerArea = document.querySelector('.dealer-area');
     
+    // Remove win animations
     playerArea.classList.remove('win-animation');
     dealerArea.classList.remove('win-animation');
+    computerPlayers.forEach(player => {
+        player.element.container.classList.remove('win-animation');
+    });
     
-    switch (result) {
-        case 'bust':
-            message = 'You bust! Dealer wins.';
-            dealerArea.classList.add('win-animation');
-            playerLosses++;
-            break;
-        case 'dealer_bust':
-            message = 'Dealer busts! You win!';
+    // Add win animations based on result
+    if (!customMessage) {
+        switch (result) {
+            case 'bust':
+                message = 'You bust! Dealer wins.';
+                dealerArea.classList.add('win-animation');
+                playerLosses++;
+                break;
+            case 'dealer_bust':
+                message = 'Dealer busts! You win!';
+                playerArea.classList.add('win-animation');
+                playerWins++;
+                break;
+            case 'player_win':
+                message = 'You win!';
+                playerArea.classList.add('win-animation');
+                playerWins++;
+                break;
+            case 'dealer_win':
+                message = 'Dealer wins.';
+                dealerArea.classList.add('win-animation');
+                playerLosses++;
+                break;
+            case 'push':
+                message = "It's a tie!";
+                playerDraws++;
+                break;
+            case 'computer_win':
+                message = 'Computer player wins!';
+                // Find which computer player won and animate them
+                computerPlayers.forEach(player => {
+                    if (player.score <= 21 && player.score > dealerScore && player.score > playerScore) {
+                        player.element.container.classList.add('win-animation');
+                    }
+                });
+                playerLosses++;
+                break;
+        }
+    } else {
+        // Add animations based on the custom message
+        if (message.includes('You win')) {
             playerArea.classList.add('win-animation');
-            playerWins++;
-            break;
-        case 'player_win':
-            message = 'You win!';
-            playerArea.classList.add('win-animation');
-            playerWins++;
-            break;
-        case 'dealer_win':
-            message = 'Dealer wins.';
+        }
+        if (message.includes('Dealer wins') || message.includes('You bust')) {
             dealerArea.classList.add('win-animation');
-            playerLosses++;
-            break;
-        case 'push':
-            message = "It's a tie!";
-            playerDraws++;
-            break;
+        }
+        
+        // Animate winning computer players
+        computerPlayers.forEach(player => {
+            if (message.includes(`Computer player ${player.id} won`)) {
+                player.element.container.classList.add('win-animation');
+            }
+        });
     }
     
     messageElement.textContent = message;
