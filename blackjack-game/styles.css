@@ -46,8 +46,24 @@ h2 {
     border: 8px solid #8B4513;
 }
 
-.dealer-area, .player-area {
+.dealer-area, .player-area, .computer-player-area {
     margin-bottom: 25px;
+}
+
+/* Computer Players */
+.computer-players-container {
+    margin-bottom: 25px;
+}
+
+.computer-player-area {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.computer-player-area:last-child {
+    margin-bottom: 0;
 }
 
 .cards {
@@ -141,8 +157,39 @@ h2 {
 .controls {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 15px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.player-count-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px;
+    border-radius: 30px;
+}
+
+.player-count-control label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.player-count-control select {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+}
+
+.player-count-control select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.5);
 }
 
 button {
