@@ -224,6 +224,11 @@ button:disabled {
     color: white;
 }
 
+#sound-button {
+    background-color: #9b59b6;
+    color: white;
+}
+
 button:hover:not(:disabled) {
     transform: translateY(-3px);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
@@ -241,6 +246,7 @@ button:active:not(:disabled) {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 15px;
     border-radius: 8px;
+    margin-bottom: 15px;
 }
 
 .stat {
@@ -259,6 +265,30 @@ button:active:not(:disabled) {
     font-size: 1.5rem;
     font-weight: bold;
     color: #ffd700;
+}
+
+/* Sound Test Link */
+.sound-test-link {
+    text-align: center;
+}
+
+.sound-test-link a {
+    display: inline-block;
+    background-color: #9b59b6;
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.sound-test-link a:hover {
+    background-color: #8e44ad;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* Responsive Design */

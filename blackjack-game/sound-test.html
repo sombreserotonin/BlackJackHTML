@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Sound Test</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            color: #f1c40f;
+            margin-bottom: 30px;
+        }
+        
+        .sound-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .back-button {
+            margin-top: 30px;
+            background-color: #e74c3c;
+        }
+        
+        .back-button:hover {
+            background-color: #c0392b;
+        }
+        
+        .toggle-button {
+            grid-column: span 2;
+            background-color: #9b59b6;
+        }
+        
+        .toggle-button:hover {
+            background-color: #8e44ad;
+        }
+    </style>
+</head>
+<body>
+    <h1>Blackjack Sound Test</h1>
+    
+    <div class="sound-buttons">
+        <button id="click-sound">Button Click</button>
+        <button id="draw-sound">Draw Card</button>
+        <button id="card-draw-sound">Card Drawing</button>
+        <button id="flip-sound">Flip Card</button>
+        <button id="win-sound">Win Game</button>
+        <button id="loss-sound">Lose Game</button>
+        <button id="sound-toggle" class="toggle-button">🔊 Sound On</button>
+    </div>
+    
+    <button class="back-button" onclick="window.location.href='index.html'">Back to Game</button>
+    
+    <script>
+        // Sound objects
+        const sounds = {
+            click: new Audio('sounds/click sound effect.mp3'),
+            draw: new Audio('sounds/Draw sound effect.mp3'),
+            cardDraw: new Audio('sounds/drawing playing card.mp3'),
+            flip: new Audio('sounds/flip card sound effect.mp3'),
+            win: new Audio('sounds/Winning Sound Effect.mp3'),
+            loss: new Audio('sounds/Loss Sound Effect.mp3')
+        };
+        
+        // Sound state
+        let muted = false;
+        
+        // Stop all sounds
+        function stopAllSounds() {
+            Object.values(sounds).forEach(sound => {
+                sound.pause();
+                sound.currentTime = 0;
+            });
+        }
+        
+        // Toggle mute state
+        function toggleMute() {
+            muted = !muted;
+            if (muted) {
+                stopAllSounds();
+                document.getElementById('sound-toggle').textContent = '🔇 Sound Off';
+            } else {
+                document.getElementById('sound-toggle').textContent = '🔊 Sound On';
+                playSound('click');
+            }
+            return muted;
+        }
+        
+        // Play a sound
+        function playSound(soundName) {
+            if (sounds[soundName] && !muted) {
+                // Stop all currently playing sounds
+                stopAllSounds();
+                
+                // Play the requested sound
+                sounds[soundName].play().catch(error => {
+                    console.log(`Error playing sound: ${error}`);
+                });
+            }
+        }
+        
+        // Add event listeners to buttons
+        document.getElementById('click-sound').addEventListener('click', () => {
+            playSound('click');
+        });
+        
+        document.getElementById('sound-toggle').addEventListener('click', toggleMute);
+        
+        document.getElementById('draw-sound').addEventListener('click', () => {
+            playSound('draw');
+        });
+        
+        document.getElementById('card-draw-sound').addEventListener('click', () => {
+            playSound('cardDraw');
+        });
+        
+        document.getElementById('flip-sound').addEventListener('click', () => {
+            playSound('flip');
+        });
+        
+        document.getElementById('win-sound').addEventListener('click', () => {
+            playSound('win');
+        });
+        
+        document.getElementById('loss-sound').addEventListener('click', () => {
+            playSound('loss');
+        });
+        
+        // Preload sounds
+        Object.values(sounds).forEach(audio => {
+            audio.load();
+        });
+    </script>
+</body>
+</html>

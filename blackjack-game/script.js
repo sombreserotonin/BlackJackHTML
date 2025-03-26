@@ -11,10 +11,53 @@ let playerWins = 0;
 let playerLosses = 0;
 let playerDraws = 0;
 
+// Sound manager
+const soundManager = {
+    sounds: {
+        click: new Audio('sounds/click sound effect.mp3'),
+        draw: new Audio('sounds/Draw sound effect.mp3'),
+        cardDraw: new Audio('sounds/drawing playing card.mp3'),
+        flip: new Audio('sounds/flip card sound effect.mp3'),
+        win: new Audio('sounds/Winning Sound Effect.mp3'),
+        loss: new Audio('sounds/Loss Sound Effect.mp3')
+    },
+    
+    // Sound state
+    muted: false,
+    
+    // Toggle mute state
+    toggleMute: function() {
+        this.muted = !this.muted;
+        return this.muted;
+    },
+    
+    // Stop all sounds
+    stopAllSounds: function() {
+        Object.values(this.sounds).forEach(sound => {
+            sound.pause();
+            sound.currentTime = 0;
+        });
+    },
+    
+    // Play a sound
+    play: function(soundName) {
+        if (this.sounds[soundName] && !this.muted) {
+            // Stop all currently playing sounds
+            this.stopAllSounds();
+            
+            // Play the requested sound
+            this.sounds[soundName].play().catch(error => {
+                console.log(`Error playing sound: ${error}`);
+            });
+        }
+    }
+};
+
 // DOM elements
 const dealButton = document.getElementById('deal-button');
 const hitButton = document.getElementById('hit-button');
 const standButton = document.getElementById('stand-button');
+const soundButton = document.getElementById('sound-button');
 const playerCardsElement = document.getElementById('player-cards');
 const dealerCardsElement = document.getElementById('dealer-cards');
 const playerScoreElement = document.getElementById('player-score');
@@ -32,9 +75,32 @@ const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'
 
 // Initialize the game
 document.addEventListener('DOMContentLoaded', () => {
-    dealButton.addEventListener('click', startNewGame);
-    hitButton.addEventListener('click', playerHit);
-    standButton.addEventListener('click', playerStand);
+    // Add click sound to buttons
+    dealButton.addEventListener('click', () => {
+        soundManager.play('click');
+        startNewGame();
+    });
+    
+    hitButton.addEventListener('click', () => {
+        soundManager.play('click');
+        playerHit();
+    });
+    
+    standButton.addEventListener('click', () => {
+        soundManager.play('click');
+        playerStand();
+    });
+    
+    // Add sound toggle functionality
+    soundButton.addEventListener('click', () => {
+        const isMuted = soundManager.toggleMute();
+        if (isMuted) {
+            soundButton.textContent = '🔇 Sound Off';
+        } else {
+            soundButton.textContent = '🔊 Sound On';
+            soundManager.play('click');
+        }
+    });
     
     // Initialize stats from localStorage if available
     if (localStorage.getItem('blackjackStats')) {
@@ -54,7 +120,15 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeComputerPlayers();
     
     // Add event listener for computer players select
-    computerPlayersSelect.addEventListener('change', updateComputerPlayerCount);
+    computerPlayersSelect.addEventListener('change', () => {
+        soundManager.play('click');
+        updateComputerPlayerCount();
+    });
+    
+    // Preload sounds
+    Object.values(soundManager.sounds).forEach(audio => {
+        audio.load();
+    });
 });
 
 // Update computer player count
@@ -220,6 +294,12 @@ function drawCard(faceDown = false) {
     }
     const card = deck.pop();
     card.faceDown = faceDown;
+    
+    // Play card draw sound (unless it's a face down card)
+    if (!faceDown) {
+        soundManager.play('cardDraw');
+    }
+    
     return card;
 }
 
@@ -332,6 +412,7 @@ function createCardElement(card) {
 function playerHit() {
     if (gameOver) return;
     
+    soundManager.play('draw');
     playerHand.push(drawCard());
     updateScores();
     
@@ -346,7 +427,12 @@ function playerStand() {
     if (gameOver) return;
     
     // Reveal dealer's face-down card
-    dealerHand.forEach(card => card.faceDown = false);
+    dealerHand.forEach(card => {
+        if (card.faceDown) {
+            card.faceDown = false;
+            soundManager.play('flip');
+        }
+    });
     
     // Computer players play their turns
     computerPlayersPlay();
@@ -489,6 +575,17 @@ function endGame(result, customMessage) {
     computerPlayers.forEach(player => {
         player.element.container.classList.remove('win-animation');
     });
+    
+    // Play win/loss sound based on result
+    if (result === 'player_win' || result === 'dealer_bust' || 
+        (customMessage && customMessage.includes('You win'))) {
+        soundManager.play('win');
+    } else if (result === 'bust' || result === 'dealer_win' || 
+               result === 'computer_win' || 
+               (customMessage && (customMessage.includes('You bust') || 
+                                 customMessage.includes('You lose')))) {
+        soundManager.play('loss');
+    }
     
     // Add win animations based on result
     if (!customMessage) {
