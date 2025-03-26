@@ -31,7 +31,7 @@ BlackJackHTML-main/
 
 ## 💡 Future Improvements
 
-- Add sound effects and animations  
+~~- Add sound effects and animations~~ Added!
 - Implement betting system with virtual chips  
 - Track game history or stats  
 - Multiplayer support or leaderboard integration
