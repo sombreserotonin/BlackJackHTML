@@ -55,6 +55,7 @@ const soundManager = {
 
 // DOM elements
 const dealButton = document.getElementById('deal-button');
+const resetButton = document.getElementById('reset-button');
 const hitButton = document.getElementById('hit-button');
 const standButton = document.getElementById('stand-button');
 const soundButton = document.getElementById('sound-button');
@@ -80,7 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
         soundManager.play('click');
         startNewGame();
     });
-    
+
+    resetButton.addEventListener('click', () => {
+        soundManager.play('click');
+        resetScores();
+    });
+
     hitButton.addEventListener('click', () => {
         soundManager.play('click');
         playerHit();
@@ -466,6 +472,18 @@ function dealerPlay() {
         dealerHand.push(drawCard());
         updateScores();
     }
+}
+// Reset Logic
+function resetScores() {
+    playerWins = 0;
+    playerLosses = 0;
+    playerDraws = 0;
+    localStorage.setItem('blackjackStats', JSON.stringify({
+        wins: playerWins,
+        losses: playerLosses,
+        draws: playerDraws
+    }));
+    updateStats();
 }
 
 // Determine the winner
