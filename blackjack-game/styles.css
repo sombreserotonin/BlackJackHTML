@@ -42,9 +42,47 @@ h2 {
     background: #006400;
     border-radius: 10px;
     padding: 30px;
+<<<<<<< Updated upstream
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border: 8px solid #8B4513;
 }
+=======
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 0 100px rgba(0, 0, 0, 0.3);
+    border: 12px solid #8B4513;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent 70%);
+    pointer-events: none;
+}
+
+.dealer-area {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+
+.player-area {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    position: relative;
+}
+
+>>>>>>> Stashed changes
 
 .dealer-area, .player-area, .computer-player-area {
     margin-bottom: 25px;
