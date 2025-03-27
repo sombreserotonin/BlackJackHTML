@@ -1,25 +1,40 @@
-# Blackjack Game 🎲🃏
+# 🎮 Blackjack Game
 
-This project is a refined and enhanced version of a university assessment. Originally built to meet the academic requirements of the subject (48023 - Programming Fundamentals), it has since been upgraded with additional features, performance improvements, and a more polished user interface. It's a simple yet engaging implementation of the classic Blackjack card game using HTML, CSS, and JavaScript.
+> A modern take on a classic card game, enhanced from its university project roots. Built with **HTML**, **CSS**, and **JavaScript** for smooth gameplay and clean visuals.
 
-## 🌟 Features
+---
 
-- Interactive player vs. dealer Blackjack gameplay  
-- Dynamic game flow with hit, stand, and restart options  
-- Basic AI logic for dealer behavior  
-- Responsive UI with visual card representations  
-- Clean and organized codebase for easy readability and maintenance
+## ✨ Highlights
 
-## 🚀 How to Run
+✅ Player vs Dealer interaction  
+✅ Dynamic game flow (`Hit`, `Stand`, `Restart`)  
+✅ Dealer AI logic  
+✅ Responsive, visual UI  
+✅ Clean, maintainable code
 
-1. Clone or download this repository.
-2. Navigate to the `blackjack-game` folder.
-3. Open `index.html` in your preferred web browser.
-4. Play and enjoy!
+---
 
-## 📁 Project Structure
+## 🚀 Getting Started
 
+```bash
+# 1. Clone or download the repo
+git clone https://github.com/your-username/blackjack-game.git
+
+# 2. Navigate into the project
+cd blackjack-game
+
+# 3. Open in browser
+open index.html
 ```
+
+Enjoy the game! 🎉
+
+---
+
+<details>
+<summary>📁 <strong>Project Structure</strong></summary>
+
+```plaintext
 BlackJackHTML-main/
 ├── blackjack-game/
 │   ├── index.html        # Game interface
@@ -28,14 +43,20 @@ BlackJackHTML-main/
 ├── LICENSE               # Project license
 └── README.md             # Project documentation
 ```
+</details>
 
-## 💡 Future Improvements
+---
 
-~~- Add sound effects and animations~~ Added!
-- Implement betting system with virtual chips  
-- Track game history or stats  
-- Multiplayer support or leaderboard integration
+## 🌱 Roadmap
 
-## 📜 License
+- [x] Add sound effects and animations  
+- [ ] Implement betting system with virtual chips  
+- [ ] Game history / stats tracking  
+- [ ] Multiplayer or leaderboard features
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+---
+
+## 📄 License
+
+Licensed under the **MIT License**.  
+See [LICENSE](./LICENSE) for full details.
