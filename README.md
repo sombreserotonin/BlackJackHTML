@@ -8,7 +8,7 @@
 
 ✅ Player vs Dealer interaction  
 ✅ Dynamic game flow (`Hit`, `Stand`, `Restart`)  
-✅ Dealer AI logic  
+✅ Dealer Logic 
 ✅ Responsive, visual UI  
 ✅ Clean, maintainable code
 
