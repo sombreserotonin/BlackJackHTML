@@ -42,11 +42,6 @@ h2 {
     background: #006400;
     border-radius: 10px;
     padding: 30px;
-<<<<<<< Updated upstream
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    border: 8px solid #8B4513;
-}
-=======
     box-shadow: 
         0 10px 30px rgba(0, 0, 0, 0.5),
         inset 0 0 100px rgba(0, 0, 0, 0.3);
@@ -82,7 +77,6 @@ h2 {
     position: relative;
 }
 
->>>>>>> Stashed changes
 
 .dealer-area, .player-area, .computer-player-area {
     margin-bottom: 25px;
@@ -249,6 +243,11 @@ button:disabled {
 
 #deal-button {
     background-color: #4CAF50;
+    color: white;
+}
+
+#reset-button {
+    background-color: #c2190d;
     color: white;
 }
 
